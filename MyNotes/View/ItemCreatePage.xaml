@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="MyNotes.View.ItemCreatePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
+    x:DataType="viewmodel:ItemCreateViewModel"
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Size="360,180">
+
+    <Frame Padding="16" CornerRadius="12" HasShadow="True"
+           HorizontalOptions="Center" VerticalOptions="Center">
+
+        <VerticalStackLayout Spacing="12">
+            <Label Text="Enter text" FontAttributes="Bold" />
+
+            <Entry x:Name="Input"
+                   Text="{Binding Text}"
+                   Placeholder="I should..."
+                   ReturnCommand="{Binding DoneCommand}"
+                   ReturnType="Done" />
+
+            <FlexLayout Direction="Row"
+                        AlignItems="Stretch"
+                        JustifyContent="Start">
+                <Button Text="Done" 
+                        Command="{Binding DoneCommand}" 
+                        FlexLayout.Basis="0%"
+                        FlexLayout.Grow="1"/>
+                <BoxView WidthRequest="10" BackgroundColor="Transparent" IsVisible="{Binding IsEdit}"/>
+                <Button Text="Delete"
+                        IsVisible="{Binding IsEdit}"
+                        Command="{Binding DeleteCommand}"
+                        BackgroundColor="Red"
+                        FlexLayout.Basis="0%"
+                        FlexLayout.Grow="1"/>
+            </FlexLayout>
+
+        </VerticalStackLayout>
+    </Frame>
+</toolkit:Popup>
