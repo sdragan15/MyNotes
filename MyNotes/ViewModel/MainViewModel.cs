@@ -48,6 +48,7 @@ namespace MyNotes.ViewModel
                 var newItem = new Item { Text = result.Text };
                 AddItem(newItem);
             }
+
         }
 
         [RelayCommand]
