@@ -10,6 +10,7 @@ namespace MyNotes.View
         {
             InitializeComponent();
             BindingContext = mainViewModel;
+            mainViewModel.GetItemsCommand.Execute(null);
         }
     }
 

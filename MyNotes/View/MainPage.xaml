@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:model="clr-namespace:MyNotes.Model"
+             xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
              xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
              x:DataType="viewmodel:MainViewModel"
              Title="{Binding Title}"
@@ -14,7 +14,7 @@
 
                 <CollectionView ItemsSource="{Binding TodoItems}">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:Item">
+                        <DataTemplate x:DataType="model:ItemDto">
                             <Grid Padding="3" ColumnDefinitions="Auto,*">
                                 <CheckBox Grid.Column="0" VerticalOptions="Start" IsChecked="{Binding IsChecked}"/>
 
@@ -41,7 +41,7 @@
 
                     <CollectionView ItemsSource="{Binding DoneItems}">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:Item">
+                        <DataTemplate x:DataType="model:ItemDto">
                             <Grid Padding="3" ColumnDefinitions="Auto,*">
                                 <CheckBox Grid.Column="0" 
                                           VerticalOptions="Start" 
