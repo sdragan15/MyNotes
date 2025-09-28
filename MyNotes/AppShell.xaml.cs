@@ -5,6 +5,10 @@
         public AppShell()
         {
             InitializeComponent();
+
+            FlyoutBehavior = (DeviceInfo.Idiom == DeviceIdiom.Desktop || DeviceInfo.Idiom == DeviceIdiom.Tablet)
+                        ? FlyoutBehavior.Locked
+                        : FlyoutBehavior.Flyout;
         }
     }
 }

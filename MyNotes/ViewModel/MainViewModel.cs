@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyNotes.Application.Model;
 using MyNotes.Application.Services;
@@ -20,6 +21,27 @@ namespace MyNotes.ViewModel
         public ObservableCollection<ItemDto> Items { get; } = [];
         public ObservableCollection<ItemDto> TodoItems { get; } = [];
         public ObservableCollection<ItemDto> DoneItems { get; } = [];
+
+        [ObservableProperty] private bool isSidebarExpanded = true;
+        [ObservableProperty] private string selectedSection = "Todos";
+
+        public double SidebarWidth => IsSidebarExpanded ? 200 : 60;
+
+        partial void OnIsSidebarExpandedChanged(bool value)
+        {
+            OnPropertyChanged(nameof(SidebarWidth));
+        }
+
+        [RelayCommand]
+        public void ToggleSidebar() => IsSidebarExpanded = !IsSidebarExpanded;
+        [RelayCommand]
+        public void ShowTodos()
+        {
+            SelectedSection = "Todos";
+            //Shell.Current.GoToAsync($"{}");
+        }
+        [RelayCommand]
+        public void ShowNotes() => SelectedSection = "Notes";
 
         public MainViewModel(ItemService itemService)
         {
