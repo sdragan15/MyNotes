@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MyNotes.View.NotesPage"
+             Title="Notes"
+             xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
+             xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
+             x:DataType="viewmodel:NotesViewModel">
+    <Grid RowDefinitions="Auto, *">
+        <FlexLayout Grid.Row="0" 
+                    Wrap="Wrap" 
+                    AlignItems="Center"
+                    JustifyContent="SpaceAround"
+                    Padding="10">
+            <CollectionView ItemsSource="{Binding NoteItems}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:NotesDto">
+                        <Frame Padding="20" BackgroundColor="#588558" HasShadow="True" BorderColor="#30000000" MaximumWidthRequest="150">
+                            <Frame.Shadow>
+                                <Shadow  Brush="Black"
+                                          Opacity="0.5"
+                                          Radius="10"
+                                          Offset="3,3"/>
+                            </Frame.Shadow>
+                            <VerticalStackLayout Spacing="10" MaximumWidthRequest="130" MaximumHeightRequest="100">
+                                <Label  Text="{Binding Header}" 
+                                         FontAttributes="Bold" 
+                                         FontSize="Header"/>
+                                <Label  Text="{Binding Content}"
+                                         LineBreakMode="TailTruncation"
+                                         MaxLines="3"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            
+        </FlexLayout>
+    </Grid>
+    
+</ContentPage>

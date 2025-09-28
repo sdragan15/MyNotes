@@ -21,8 +21,8 @@
 
     <FlyoutItem Icon="notes.svg" Title="Notes">
         <ShellContent
-            ContentTemplate="{DataTemplate local:MainPage}"
-            Route="MainPage" />
+            ContentTemplate="{DataTemplate local:NotesPage}"
+            Route="NotesPage" />
     </FlyoutItem>
 
 </Shell>
