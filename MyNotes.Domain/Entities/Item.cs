@@ -18,12 +18,15 @@ namespace MyNotes.Domain.Entities
         public bool IsChecked { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateDone { get; set; }
+        public DateTime LastUpdateTime { get; set; }
+
         public Item()
         {
             Text = string.Empty;
             IsChecked = false;
             DateCreated = DateTime.UtcNow;
             DateDone = DateTime.UtcNow;
+            LastUpdateTime = DateTime.UtcNow;
         }
     }
 }

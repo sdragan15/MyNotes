@@ -17,7 +17,9 @@ namespace MyNotes.Application.Model
         [ObservableProperty]
         public DateTime dateCreated;
         [ObservableProperty]
-        public DateTime dateDone;
+        public DateTime? dateDone;
+        [ObservableProperty]
+        public DateTime lastUpdateTime;
 
         public ItemDto()
         {
@@ -25,6 +27,27 @@ namespace MyNotes.Application.Model
             text = string.Empty;
             isChecked = false;
             dateCreated = DateTime.UtcNow;
+            lastUpdateTime = DateTime.UtcNow;
+        }
+
+        public void UpdateText(string newText)
+        {
+            Text = newText;
+            LastUpdateTime = DateTime.UtcNow;
+        }
+
+        public void Done()
+        {
+            IsChecked = true;
+            DateDone = DateTime.UtcNow;
+            LastUpdateTime = DateTime.UtcNow;
+        }
+
+        public void UnDone()
+        {
+            IsChecked = false;
+            DateDone = null;
+            LastUpdateTime = DateTime.UtcNow;
         }
     }
 }

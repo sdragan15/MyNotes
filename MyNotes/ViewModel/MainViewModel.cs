@@ -47,8 +47,8 @@ namespace MyNotes.ViewModel
         {
             Title = "Todo list";
             _itemService = itemService;
-            TodoItems = new(Items.Where(x => !x.IsChecked));
-            DoneItems = new(Items.Where(x => x.IsChecked));
+            TodoItems = new(Items.Where(x => !x.IsChecked).OrderByDescending(x => x.LastUpdateTime));
+            DoneItems = new(Items.Where(x => x.IsChecked).OrderByDescending(x => x.LastUpdateTime));
         }
 
         [RelayCommand]
@@ -61,11 +61,11 @@ namespace MyNotes.ViewModel
                 Items.Add(item);
                 if (item.IsChecked)
                 {
-                    DoneItems.Add(item);
+                    DoneItems.Insert(0, item);
                 }
                 else
                 {
-                    TodoItems.Add(item);
+                    TodoItems.Insert(0, item);
                 }
             }
         }
@@ -92,12 +92,14 @@ namespace MyNotes.ViewModel
             var popup = new ItemCreatePage(itemCreateViewModel);
 
             var result = (ItemEditResult?)await MauiApp.Current.MainPage.ShowPopupAsync(new ItemCreatePage(itemCreateViewModel));
-            if (result?.Action == ItemEditAction.Save && !string.IsNullOrWhiteSpace(result.Text))
+            if(result == null) return;
+
+            if (result!.Action == ItemEditAction.Save && !string.IsNullOrWhiteSpace(result.Text))
             {
                 item.Text = result.Text;
                 await _itemService.UpdateItemAsync(item);
             }
-            else if (result.Action.Equals(ItemEditAction.Delete))
+            else if (result!.Action.Equals(ItemEditAction.Delete))
             {
                 await RemoveItem(item);
                 await _itemService.DeleteItemAsync(item.Id);
@@ -108,7 +110,7 @@ namespace MyNotes.ViewModel
         {
             Attach(item);
             Items.Add(item);
-            TodoItems.Add(item);
+            TodoItems.Insert(0, item);
         }
 
         public async Task RemoveItem(ItemDto item)
@@ -136,13 +138,13 @@ namespace MyNotes.ViewModel
         {
             item.DateDone = DateTime.UtcNow;
             TodoItems.Remove(item);
-            DoneItems.Add(item);
+            DoneItems.Insert(0, item);
             await _itemService.UpdateItemAsync(item);
         }
 
         private async Task UnChecked(ItemDto item)
         {
-            TodoItems.Add(item);
+            TodoItems.Insert(0, item);
             DoneItems.Remove(item);
             await _itemService.UpdateItemAsync(item);
         }
