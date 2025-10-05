@@ -9,33 +9,46 @@
     <Grid RowDefinitions="Auto, *">
         <FlexLayout Grid.Row="0" 
                     Wrap="Wrap" 
-                    AlignItems="Center"
-                    JustifyContent="SpaceAround"
-                    Padding="10">
-            <CollectionView ItemsSource="{Binding NoteItems}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="model:NotesDto">
-                        <Frame Padding="20" BackgroundColor="#588558" HasShadow="True" BorderColor="#30000000" MaximumWidthRequest="150">
-                            <Frame.Shadow>
-                                <Shadow  Brush="Black"
-                                          Opacity="0.5"
-                                          Radius="10"
-                                          Offset="3,3"/>
-                            </Frame.Shadow>
-                            <VerticalStackLayout Spacing="10" MaximumWidthRequest="130" MaximumHeightRequest="100">
-                                <Label  Text="{Binding Header}" 
-                                         FontAttributes="Bold" 
-                                         FontSize="Header"/>
-                                <Label  Text="{Binding Content}"
-                                         LineBreakMode="TailTruncation"
-                                         MaxLines="3"/>
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            
+                    Direction="Row"
+                    AlignItems="Start"
+                    JustifyContent="Start"
+                    Padding="10"
+                    BindableLayout.ItemsSource="{Binding NoteItems}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="model:NotesDto">
+                    <Frame Padding="20" 
+                           BackgroundColor="#588558" 
+                           HasShadow="True" 
+                           BorderColor="#30000000" 
+                           MaximumWidthRequest="150"
+                           Margin="4">
+                        <Frame.Shadow>
+                            <Shadow  Brush="Black"
+                                    Opacity="0.5"
+                                    Radius="10"
+                                    Offset="3,3"/>
+                        </Frame.Shadow>
+                        <VerticalStackLayout Spacing="10" MaximumWidthRequest="130" MaximumHeightRequest="100">
+                            <VerticalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </VerticalStackLayout.GestureRecognizers>
+                            <Label  Text="{Binding Header}" 
+                                    FontAttributes="Bold" 
+                                    FontSize="Header"
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="1">
+                            </Label>
+                            <Label  Text="{Binding Content}"
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="3"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
         </FlexLayout>
+
     </Grid>
     
 </ContentPage>

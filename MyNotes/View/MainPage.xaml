@@ -25,7 +25,7 @@
                          VerticalOptions="Center">
                                     <Label.GestureRecognizers>
                                         <TapGestureRecognizer
-                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:MainViewModel}}, Path=EditItemCommand}"
+                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
                                  CommandParameter="{Binding .}" />
                                     </Label.GestureRecognizers>
                                 </Label>

@@ -27,10 +27,12 @@ namespace MyNotes
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<ItemCreateViewModel>();
             builder.Services.AddTransient<NotesViewModel>();
+            builder.Services.AddTransient<NotesCreateViewModel>();
 
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<NotesPage>();
             builder.Services.AddSingleton<ItemCreatePage>();
+            builder.Services.AddSingleton<NotesCreatePage>();
             builder.Services.AddScoped<IItemRepository, ItemRepository>();
             builder.Services.AddScoped<ItemService>();
 
