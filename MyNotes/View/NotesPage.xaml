@@ -6,7 +6,7 @@
              xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
              xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
              x:DataType="viewmodel:NotesViewModel">
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *, Auto">
         <FlexLayout Grid.Row="0" 
                     Wrap="Wrap" 
                     Direction="Row"
@@ -48,7 +48,10 @@
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
         </FlexLayout>
-
+        <Button Grid.Row="2"
+                Text="Create"
+                Command="{Binding CreateItemCommand}"
+                Margin="20" />
     </Grid>
     
 </ContentPage>

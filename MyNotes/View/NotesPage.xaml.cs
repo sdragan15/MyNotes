@@ -9,4 +9,5 @@ public partial class NotesPage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+
 }

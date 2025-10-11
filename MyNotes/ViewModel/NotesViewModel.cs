@@ -8,11 +8,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Android.Preferences.PreferenceActivity;
 using MauiApp = Microsoft.Maui.Controls.Application;
 
 namespace MyNotes.ViewModel
 {
-    public partial class NotesViewModel : BaseViewModel
+    public partial class NotesViewModel : BaseViewModel, IQueryAttributable
     {
         public ObservableCollection<NotesDto> NoteItems { get; } = [];
 
@@ -26,11 +27,44 @@ namespace MyNotes.ViewModel
         [RelayCommand]
         public async Task EditItem(NotesDto item)
         {
-            NotesCreateViewModel notesCreateViewModel = new NotesCreateViewModel();
-            var popup = new NotesCreatePage(notesCreateViewModel);
+            await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage));
+        }
 
-            var result = await MauiApp.Current.MainPage.ShowPopupAsync(popup);
-            if (result == null) return;
+        [RelayCommand]
+        public async Task CreateItem()
+        {
+            await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage));
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            string body = "";
+            string title = "";
+
+            if(query.TryGetValue("createdText", out var bodyObj))
+            {
+                body = bodyObj.ToString();
+            }
+            else
+            {
+                return;
+            }
+
+            if (query.TryGetValue("headTitle", out var titleObj))
+            {
+                title = titleObj.ToString();
+            }
+            else
+            {
+                return;
+            }
+
+            NoteItems.Insert(0, new NotesDto
+            {
+                Header = title,
+                Content = body.Trim(),
+                DateCreated = DateTime.Now
+            });
         }
     }
 }

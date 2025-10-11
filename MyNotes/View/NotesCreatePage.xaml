@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
-                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-                x:Class="MyNotes.View.NotesCreatePage"
-                CanBeDismissedByTappingOutsideOfPopup="True">
-    <Frame Padding="16" CornerRadius="12" HasShadow="True"
-       HorizontalOptions="Center" VerticalOptions="Center">
-        <VerticalStackLayout Spacing="12">
-            <Label Text="Enter text" FontAttributes="Bold" />
+<ContentPage
+    x:Class="MyNotes.View.NotesCreatePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
+    x:DataType="viewmodel:NotesCreateViewModel"
+    Title="Create note">
 
+    <Grid Padding="16" RowDefinitions="Auto,*,Auto">
 
-            <Editor x:Name="MyEditor" Placeholder="pisi pisi miii"/>
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" ColumnDefinitions="*">
+            <Label Text="Title" FontAttributes="Bold" />
+            <Entry Grid.Row="1"
+                   x:Name="HeaderEntry"
+                   Placeholder="Enter title..."
+                   Text="{Binding HeadTitle, Mode=TwoWay}"
+                   ReturnType="Next" />
+        </Grid>
 
+        <Editor Grid.Row="1"
+                x:Name="BodyEditor"
+                Placeholder="Type your note..."
+                Text="{Binding Body, Mode=TwoWay}"
+                AutoSize="Disabled"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                MaxLength="20000"
+                Margin="0,8" />
 
-            <FlexLayout Direction="Row"
-                    AlignItems="Stretch"
-                    JustifyContent="Start">
-                <Button Text="Done" 
-                    FlexLayout.Basis="0%"
-                    FlexLayout.Grow="1"/>
-                    <BoxView WidthRequest="10" BackgroundColor="Transparent"/>
-            </FlexLayout>
-
-        </VerticalStackLayout>
-    </Frame>
-</toolkit:Popup>
+        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+            <Button Grid.Column="0"
+                    Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Margin="0,10,10,0" />
+            <Button Grid.Column="1"
+                    Text="Create"
+                    Command="{Binding CreateCommand}"
+                    IsEnabled="{Binding CanCreate}"
+                    Margin="0,10,0,0" />
+        </Grid>
+    </Grid>
+</ContentPage>

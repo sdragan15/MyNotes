@@ -9,6 +9,8 @@
             FlyoutBehavior = (DeviceInfo.Idiom == DeviceIdiom.Desktop || DeviceInfo.Idiom == DeviceIdiom.Tablet)
                         ? FlyoutBehavior.Locked
                         : FlyoutBehavior.Flyout;
+
+            Routing.RegisterRoute(nameof(View.NotesCreatePage), typeof(View.NotesCreatePage));
         }
     }
 }
