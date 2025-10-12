@@ -1,33 +1,53 @@
 ﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
 using MyNotes.Application.Model;
+using MyNotes.Application.Services;
 using MyNotes.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using static Android.Preferences.PreferenceActivity;
 using MauiApp = Microsoft.Maui.Controls.Application;
 
 namespace MyNotes.ViewModel
 {
-    public partial class NotesViewModel : BaseViewModel, IQueryAttributable
+    public partial class NotesViewModel : BaseViewModel
     {
-        public ObservableCollection<NotesDto> NoteItems { get; } = [];
+        public NotesService _notesService { get; set; }
 
-        public NotesViewModel()
+        public ObservableCollection<NotesDto> NoteItems { get; } = [];
+        private string _lastOpId;
+
+        public NotesViewModel(NotesService notesService)
         {
-            NoteItems.Add(new NotesDto { Header = "First Note", Content = "This is the content of the first note.", DateCreated = DateTime.Now });
-            NoteItems.Add(new NotesDto { Header = "Second Note", Content = "This is the content of the second note.", DateCreated = DateTime.Now });
-            NoteItems.Add(new NotesDto { Header = "Third Note", Content = "This is the content of the third note.", DateCreated = DateTime.Now });
+            _notesService = notesService;
         }
+
+        [RelayCommand]
+        public async Task GetNotes()
+        {
+            var notes = await _notesService.GetAllNotesAsync();
+            foreach(var note in notes)
+            {
+                NoteItems.Insert(0, note);
+            }
+        }
+
+
 
         [RelayCommand]
         public async Task EditItem(NotesDto item)
         {
-            await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage));
+            var itemSerialized = JsonSerializer.Serialize(item);
+
+            await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage), new Dictionary<string, object>
+            {
+                ["item"] = itemSerialized
+            });
         }
 
         [RelayCommand]
@@ -36,35 +56,127 @@ namespace MyNotes.ViewModel
             await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage));
         }
 
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        
+        public async Task OnAppearing(IDictionary<string, object> query)
         {
-            string body = "";
-            string title = "";
-
-            if(query.TryGetValue("createdText", out var bodyObj))
-            {
-                body = bodyObj.ToString();
-            }
-            else
+            if(query == null || query.Count == 0)
             {
                 return;
             }
 
-            if (query.TryGetValue("headTitle", out var titleObj))
-            {
-                title = titleObj.ToString();
-            }
-            else
+            var action = "";
+            bool hasAction = query.TryGetValue("action", out var actionObj);
+            if (!hasAction)
             {
                 return;
             }
 
-            NoteItems.Insert(0, new NotesDto
+            action = actionObj?.ToString() ?? "";
+            if (action == "create")
+            {
+                await CreateNotes(query);
+            }
+            else if (action == "update")
+            {
+                await UpdateNotes(query);
+            }
+        }
+
+        private async Task UpdateNotes(IDictionary<string, object> query)
+        {
+            Guid id = Guid.Empty;
+            string? body = "";
+            string? title = "";
+            string opId;
+
+            bool hasId = query.TryGetValue("id", out var idObj);
+            bool hasBody = query.TryGetValue("createdText", out var bodyObj);
+            bool hasTitle = query.TryGetValue("headTitle", out var titleObj);
+            query.TryGetValue("opId", out var opIdObj);
+
+            if (!hasBody || !hasTitle || !hasId)
+            {
+                return;
+            }
+
+            body = bodyObj?.ToString();
+            title = titleObj?.ToString();
+            opId = opIdObj!.ToString();
+
+            if (string.IsNullOrWhiteSpace(body) || string.IsNullOrWhiteSpace(title) || !Guid.TryParse(idObj?.ToString(), out id))
+            {
+                return;
+            }
+
+            if (opId.Equals(_lastOpId))
+            {
+                return;
+            }
+
+            var existingItem = NoteItems.FirstOrDefault(n => n.Id.Equals(id));
+            if(existingItem == null)
+            {
+                return;
+            }
+
+            NoteItems.Remove(existingItem);
+            existingItem.Header = title;
+            existingItem.Content = body.Trim();
+
+            NoteItems.Insert(0, existingItem);
+            await _notesService.UpdateNoteAsync(existingItem);
+
+            _lastOpId = opId;
+        }
+
+        private async Task CreateNotes(IDictionary<string, object> query)
+        {
+            string? body = "";
+            string? title = "";
+            string opId;
+
+            bool hasBody = query.TryGetValue("createdText", out var bodyObj);
+            bool hasTitle = query.TryGetValue("headTitle", out var titleObj);
+            query.TryGetValue("opId", out var opIdObj);
+
+            if (!hasBody || !hasTitle)
+            {
+                return;
+            }
+
+            body = bodyObj?.ToString();
+            title = titleObj?.ToString();
+            opId = opIdObj!.ToString();
+
+            if (string.IsNullOrWhiteSpace(body) || string.IsNullOrWhiteSpace(title))
+            {
+                return;
+            }
+
+            if (opId.Equals(_lastOpId))
+            {
+                return;
+            }
+
+            var newNotes = new NotesDto()
             {
                 Header = title,
                 Content = body.Trim(),
                 DateCreated = DateTime.Now
-            });
+            };
+
+            NoteItems.Insert(0, newNotes);
+            try
+            {
+                await _notesService.AddNoteAsync(newNotes);
+            }
+            catch(Exception e)
+            {
+                throw new ApplicationException("An error occurred while retrieving items.", e);
+            }
+            
+
+            _lastOpId = opId;
         }
     }
 }

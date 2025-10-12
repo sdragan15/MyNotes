@@ -15,6 +15,7 @@ namespace MyNotes.Infrastructure.Sqlite.Data
         }
 
         public DbSet<Item> Items { get; set; }
+        public DbSet<Notes> Notes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

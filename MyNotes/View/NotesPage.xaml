@@ -21,6 +21,7 @@
                            HasShadow="True" 
                            BorderColor="#30000000" 
                            MaximumWidthRequest="150"
+                           MinimumWidthRequest="100"
                            Margin="4">
                         <Frame.Shadow>
                             <Shadow  Brush="Black"

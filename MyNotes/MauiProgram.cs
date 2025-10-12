@@ -33,11 +33,14 @@ namespace MyNotes
             builder.Services.AddSingleton<NotesPage>();
             builder.Services.AddSingleton<ItemCreatePage>();
             builder.Services.AddSingleton<NotesCreatePage>();
-            builder.Services.AddScoped<IItemRepository, ItemRepository>();
-            builder.Services.AddScoped<ItemService>();
+
+            builder.Services.AddTransient<IItemRepository, ItemRepository>();
+            builder.Services.AddTransient<INotesRepository, NotesRepository>();
+            builder.Services.AddTransient<ItemService>();
+            builder.Services.AddTransient<NotesService>();
 
             #region Database
-            
+
             var dbPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, "MyNotesDb.db");
             builder.Services.AddDbContext<TodoContext>();
 
