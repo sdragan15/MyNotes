@@ -5,6 +5,7 @@
              Title="Notes"
              xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
              xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="viewmodel:NotesViewModel">
     <Grid RowDefinitions="Auto, *, Auto">
         <FlexLayout Grid.Row="0" 
@@ -16,36 +17,54 @@
                     BindableLayout.ItemsSource="{Binding NoteItems}">
             <BindableLayout.ItemTemplate>
                 <DataTemplate x:DataType="model:NotesDto">
-                    <Frame Padding="20" 
-                           BackgroundColor="#588558" 
-                           HasShadow="True" 
-                           BorderColor="#30000000" 
-                           MaximumWidthRequest="150"
-                           MinimumWidthRequest="100"
-                           Margin="4">
-                        <Frame.Shadow>
-                            <Shadow  Brush="Black"
-                                    Opacity="0.5"
-                                    Radius="10"
-                                    Offset="3,3"/>
-                        </Frame.Shadow>
-                        <VerticalStackLayout Spacing="10" MaximumWidthRequest="130" MaximumHeightRequest="100">
-                            <VerticalStackLayout.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
-                                    CommandParameter="{Binding .}" />
-                            </VerticalStackLayout.GestureRecognizers>
-                            <Label  Text="{Binding Header}" 
-                                    FontAttributes="Bold" 
-                                    FontSize="Header"
-                                    LineBreakMode="TailTruncation"
-                                    MaxLines="1">
-                            </Label>
-                            <Label  Text="{Binding Content}"
-                                    LineBreakMode="TailTruncation"
-                                    MaxLines="3"/>
-                        </VerticalStackLayout>
-                    </Frame>
+                    <Border
+                        Stroke="#003390ff"
+                        StrokeThickness="2"
+                        StrokeShape="{RoundRectangle CornerRadius=12}">
+                        <!--<Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="#3390ff"/>
+                            </DataTrigger>
+                        </Border.Triggers>-->
+                        <Frame Padding="20" 
+                               BackgroundColor="#588558" 
+                               HasShadow="True" 
+                               BorderColor="#30000000" 
+                               MaximumWidthRequest="150"
+                               MinimumWidthRequest="100"
+                               Margin="2">
+                            <Frame.Shadow>
+                                <Shadow  Brush="Black"
+                                        Opacity="0.5"
+                                        Radius="10"
+                                        Offset="3,3"/>
+                            </Frame.Shadow>
+                            <VerticalStackLayout x:Name="note" Spacing="10" MaximumWidthRequest="130" MaximumHeightRequest="100">
+                                <!--<VerticalStackLayout.Behaviors>
+                                    <toolkit:TouchBehavior
+                                        LongPressDuration="500"
+                                        LongPressCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectNoteCommand}"
+                                        LongPressCommandParameter="{Binding .}"/>
+                                </VerticalStackLayout.Behaviors>-->
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Label  Text="{Binding Header}" 
+                                        FontAttributes="Bold" 
+                                        FontSize="Header"
+                                        LineBreakMode="TailTruncation"
+                                        MaxLines="1">
+                                </Label>
+                                <Label  Text="{Binding Content}"
+                                        LineBreakMode="TailTruncation"
+                                        MaxLines="3"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </Border>
+                    
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
         </FlexLayout>

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyNotes.Application.Model;
 using MyNotes.Application.Services;
@@ -19,7 +20,8 @@ namespace MyNotes.ViewModel
     {
         public NotesService _notesService { get; set; }
 
-        public ObservableCollection<NotesDto> NoteItems { get; } = [];
+        [ObservableProperty]
+        private ObservableCollection<NotesDto> noteItems = [];
         private string _lastOpId;
 
         public NotesViewModel(NotesService notesService)
@@ -31,10 +33,7 @@ namespace MyNotes.ViewModel
         public async Task GetNotes()
         {
             var notes = await _notesService.GetAllNotesAsync();
-            foreach(var note in notes)
-            {
-                NoteItems.Insert(0, note);
-            }
+            NoteItems = new ObservableCollection<NotesDto>(notes.OrderByDescending(x => x.DateCreated));
         }
 
 
@@ -54,6 +53,12 @@ namespace MyNotes.ViewModel
         public async Task CreateItem()
         {
             await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage));
+        }
+
+        [RelayCommand]
+        public async Task SelectNote(NotesDto note)
+        {
+            note.IsSelected = true;
         }
 
         
@@ -166,6 +171,7 @@ namespace MyNotes.ViewModel
             };
 
             NoteItems.Insert(0, newNotes);
+
             try
             {
                 await _notesService.AddNoteAsync(newNotes);

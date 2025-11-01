@@ -18,7 +18,7 @@ namespace MyNotes.ViewModel
     public partial class MainViewModel : BaseViewModel
     {
         ItemService _itemService;
-        public ObservableCollection<ItemDto> Items { get; } = [];
+        public ObservableCollection<ItemDto> Items { get; set; } = [];
         public ObservableCollection<ItemDto> TodoItems { get; } = [];
         public ObservableCollection<ItemDto> DoneItems { get; } = [];
 
@@ -55,7 +55,7 @@ namespace MyNotes.ViewModel
         public async Task GetItems()
         {
             var items = await _itemService.GetAllItemsAsync();
-             foreach(var item in items)
+            foreach (var item in items)
             {
                 Attach(item);
                 Items.Add(item);

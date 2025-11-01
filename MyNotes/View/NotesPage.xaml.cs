@@ -11,7 +11,7 @@ public partial class NotesPage : ContentPage, IQueryAttributable
 	{
 		InitializeComponent();
 		BindingContext = viewModel;
-        viewModel.GetNotesCommand.Execute(null);
+        
 	}
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -25,6 +25,8 @@ public partial class NotesPage : ContentPage, IQueryAttributable
         if (BindingContext is NotesViewModel vm)
         {
             await vm.OnAppearing(_query);
+            if(vm.GetNotesCommand.CanExecute(null))
+                vm.GetNotesCommand.Execute(null);
         }
     }
 }

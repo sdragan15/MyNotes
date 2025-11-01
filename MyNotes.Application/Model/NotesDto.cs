@@ -16,6 +16,8 @@ namespace MyNotes.Application.Model
         string? header;
         [ObservableProperty]
         public DateTime dateCreated;
+        [ObservableProperty]
+        public bool isSelected;
 
         public NotesDto()
         {
@@ -23,6 +25,7 @@ namespace MyNotes.Application.Model
             content = "New content";
             header = "New note";
             dateCreated = DateTime.UtcNow;
+            isSelected = false;
         }
         
     }
