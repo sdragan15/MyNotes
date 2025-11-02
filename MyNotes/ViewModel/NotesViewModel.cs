@@ -24,9 +24,16 @@ namespace MyNotes.ViewModel
         private ObservableCollection<NotesDto> noteItems = [];
         private string _lastOpId;
 
+        [ObservableProperty]
+        private bool selectionMode = false;
+        [ObservableProperty]
+        private int selectDuration = 500;
+
         public NotesViewModel(NotesService notesService)
         {
             _notesService = notesService;
+            SelectionMode = false;
+            SelectDuration = 500;
         }
 
         [RelayCommand]
@@ -41,6 +48,11 @@ namespace MyNotes.ViewModel
         [RelayCommand]
         public async Task EditItem(NotesDto item)
         {
+            if (SelectionMode)
+            {
+                return;
+            }
+
             var itemSerialized = JsonSerializer.Serialize(item);
 
             await Shell.Current.GoToAsync(nameof(MyNotes.View.NotesCreatePage), new Dictionary<string, object>
@@ -58,7 +70,9 @@ namespace MyNotes.ViewModel
         [RelayCommand]
         public async Task SelectNote(NotesDto note)
         {
-            note.IsSelected = true;
+            note.IsSelected = !note.IsSelected;
+            SelectionMode = true;
+            SelectDuration = 5;
         }
 
         

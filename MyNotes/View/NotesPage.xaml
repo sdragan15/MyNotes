@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyNotes.View.NotesPage"
              Title="Notes"
+             x:Name="NotesPageView"
              xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
              xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -21,14 +22,15 @@
                         Stroke="#003390ff"
                         StrokeThickness="2"
                         StrokeShape="{RoundRectangle CornerRadius=12}">
-                        <!--<Border.Triggers>
+                        <Border.Triggers>
                             <DataTrigger TargetType="Border" Binding="{Binding IsSelected}"
                                          Value="True">
                                 <Setter Property="Stroke" Value="#3390ff"/>
                             </DataTrigger>
-                        </Border.Triggers>-->
-                        <Frame Padding="20" 
-                               BackgroundColor="#588558" 
+                        </Border.Triggers>
+                        <Frame
+                            Padding="20"
+                            BackgroundColor="#588558" 
                                HasShadow="True" 
                                BorderColor="#30000000" 
                                MaximumWidthRequest="150"
@@ -40,18 +42,22 @@
                                         Radius="10"
                                         Offset="3,3"/>
                             </Frame.Shadow>
-                            <VerticalStackLayout x:Name="note" Spacing="10" MaximumWidthRequest="130" MaximumHeightRequest="100">
-                                <!--<VerticalStackLayout.Behaviors>
-                                    <toolkit:TouchBehavior
-                                        LongPressDuration="500"
-                                        LongPressCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectNoteCommand}"
-                                        LongPressCommandParameter="{Binding .}"/>
-                                </VerticalStackLayout.Behaviors>-->
-                                <VerticalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
-                                        CommandParameter="{Binding .}" />
-                                </VerticalStackLayout.GestureRecognizers>
+                            <Frame.Behaviors>
+                                <toolkit:TouchBehavior
+                                    LongPressDuration="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.SelectDuration}"
+                                    LongPressCommand="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.SelectNoteCommand}"
+                                    LongPressCommandParameter="{Binding .}"/>
+                            </Frame.Behaviors>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.EditItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <VerticalStackLayout 
+                                x:Name="note" 
+                                Spacing="10" 
+                                MaximumWidthRequest="130" 
+                                MaximumHeightRequest="100">
                                 <Label  Text="{Binding Header}" 
                                         FontAttributes="Bold" 
                                         FontSize="Header"
