@@ -42,18 +42,20 @@
                                         Radius="10"
                                         Offset="3,3"/>
                             </Frame.Shadow>
-                            <Frame.Behaviors>
+                            <!--<Frame.Behaviors>
                                 <toolkit:TouchBehavior
                                     LongPressDuration="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.SelectDuration}"
                                     LongPressCommand="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.SelectNoteCommand}"
                                     LongPressCommandParameter="{Binding .}"/>
-                            </Frame.Behaviors>
-                            <Frame.GestureRecognizers>
+                            </Frame.Behaviors>-->
+                            <!--<Frame.GestureRecognizers>
                                 <TapGestureRecognizer
                                     Command="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.EditItemCommand}"
                                     CommandParameter="{Binding .}" />
-                            </Frame.GestureRecognizers>
+                            </Frame.GestureRecognizers>-->
                             <VerticalStackLayout 
+                                BackgroundColor="Red"
+
                                 x:Name="note" 
                                 Spacing="10" 
                                 MaximumWidthRequest="130" 
@@ -67,6 +69,11 @@
                                 <Label  Text="{Binding Content}"
                                         LineBreakMode="TailTruncation"
                                         MaxLines="3"/>
+                                <!--<VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
+                                         CommandParameter="{Binding .}" />
+                                </VerticalStackLayout.GestureRecognizers>-->
                             </VerticalStackLayout>
                         </Frame>
                     </Border>

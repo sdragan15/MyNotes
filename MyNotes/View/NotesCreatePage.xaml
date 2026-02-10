@@ -7,6 +7,13 @@
     x:DataType="viewmodel:NotesCreateViewModel"
     Title="Create note">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            IconImageSource="confirm.svg"
+            Command="{Binding CreateCommand}"
+            />
+    </ContentPage.ToolbarItems>
+    
     <Grid Padding="16" RowDefinitions="Auto,*,Auto">
 
         <Grid Grid.Row="0" RowDefinitions="Auto,Auto" ColumnDefinitions="*">
@@ -28,7 +35,7 @@
                 MaxLength="20000"
                 Margin="0,8" />
 
-        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+        <!--<Grid Grid.Row="2" ColumnDefinitions="*,*">
             <Button Grid.Column="0"
                     Text="Cancel"
                     Command="{Binding CancelCommand}"
@@ -38,6 +45,6 @@
                     Command="{Binding CreateCommand}"
                     IsEnabled="{Binding CanCreate}"
                     Margin="0,10,0,0" />
-        </Grid>
+        </Grid>-->
     </Grid>
 </ContentPage>
