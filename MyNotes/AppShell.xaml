@@ -5,11 +5,42 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MyNotes.View"
     Shell.FlyoutBehavior="Flyout"
+    Shell.FlyoutBackgroundColor="#F3F7F2"
     Title="MyNotes">
 
+    <Shell.Resources>
+        <Style TargetType="FlyoutItem">
+            <Setter Property="Shell.ItemTemplate">
+                <DataTemplate>
+                    <Grid ColumnDefinitions="Auto,*" Padding="16,12" BackgroundColor="Transparent">
+                        <Image Grid.Column="0"
+                               Source="{Binding FlyoutIcon}"
+                               HeightRequest="22" WidthRequest="22"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding Title}"
+                               TextColor="#1C2B18"
+                               FontSize="15"
+                               Margin="14,0,0,0"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </Setter>
+        </Style>
+    </Shell.Resources>
+
     <Shell.FlyoutHeader>
-        <Grid Padding="12" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#1E1E1E}">
-            <Label Text="MyNotes" FontAttributes="Bold" FontSize="20"/>
+        <Grid Padding="16,20,16,16" BackgroundColor="#3A5E35">
+            <VerticalStackLayout Spacing="2">
+                <Label Text="MyNotes"
+                       FontAttributes="Bold"
+                       FontSize="22"
+                       TextColor="#F3F7F2" />
+                <BoxView HeightRequest="2"
+                         WidthRequest="32"
+                         BackgroundColor="#A8C4A2"
+                         HorizontalOptions="Start" />
+            </VerticalStackLayout>
         </Grid>
     </Shell.FlyoutHeader>
 
