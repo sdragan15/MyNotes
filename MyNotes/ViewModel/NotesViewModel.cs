@@ -68,11 +68,20 @@ namespace MyNotes.ViewModel
         }
 
         [RelayCommand]
-        public async Task SelectNote(NotesDto note)
+        public async Task DeleteNote(NotesDto note)
         {
-            note.IsSelected = !note.IsSelected;
-            SelectionMode = true;
-            SelectDuration = 5;
+            if (note == null) return;
+
+            bool confirmed = await Shell.Current.DisplayAlert(
+                "Delete note",
+                $"Delete \"{note.Header}\"?",
+                "Delete",
+                "Cancel");
+
+            if (!confirmed) return;
+
+            NoteItems.Remove(note);
+            await _notesService.DeleteNoteAsync(note.Id);
         }
 
         

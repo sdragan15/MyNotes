@@ -37,14 +37,14 @@ namespace MyNotes.Infrastucture.Sqlite.Repositories
             return items;
         }
 
-        public Task<List<Item>> GetAllCheckedAsync()
+        public async Task<List<Item>> GetAllCheckedAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Items.Where(x => x.IsChecked).ToListAsync();
         }
 
-        public Task<List<Item>> GetAllUncheckedAsync()
+        public async Task<List<Item>> GetAllUncheckedAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Items.Where(x => !x.IsChecked).ToListAsync();
         }
 
         public async Task<Item?> GetByIdAsync(Guid id)

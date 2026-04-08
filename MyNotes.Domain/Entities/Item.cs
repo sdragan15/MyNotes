@@ -25,7 +25,7 @@ namespace MyNotes.Domain.Entities
             Text = string.Empty;
             IsChecked = false;
             DateCreated = DateTime.UtcNow;
-            DateDone = DateTime.UtcNow;
+            DateDone = null;
             LastUpdateTime = DateTime.UtcNow;
         }
     }

@@ -6,7 +6,10 @@
              x:DataType="viewmodel:MainViewModel"
              Title="{Binding Title}"
              x:Class="MyNotes.View.MainPage"
-             BackgroundColor="#F3F7F2">
+             BackgroundColor="#F3F7F2"
+             Shell.BackgroundColor="#3A5E35"
+             Shell.TitleColor="#F3F7F2"
+             Shell.ForegroundColor="#F3F7F2">
 
     <Grid RowDefinitions="*,Auto" Padding="16,10">
 

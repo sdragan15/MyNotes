@@ -22,7 +22,7 @@ namespace MyNotes.Domain.Entities
         public Notes()
         {
             DateCreated = DateTime.UtcNow;
-            DateDone = DateTime.UtcNow;
+            DateDone = null;
             LastUpdateTime = DateTime.UtcNow;
         }
     }

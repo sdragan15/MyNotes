@@ -5,46 +5,65 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
     x:DataType="viewmodel:NotesCreateViewModel"
-    Title="Create note">
+    Title="Create note"
+    BackgroundColor="#F3F7F2"
+    Shell.BackgroundColor="#3A5E35"
+    Shell.TitleColor="#F3F7F2"
+    Shell.ForegroundColor="#F3F7F2">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            IconImageSource="confirm.svg"
-            Command="{Binding CreateCommand}"
-            />
+            IconImageSource="iconscheck.svg"
+            Command="{Binding CreateCommand}" />
     </ContentPage.ToolbarItems>
-    
-    <Grid Padding="16" RowDefinitions="Auto,*,Auto">
 
-        <Grid Grid.Row="0" RowDefinitions="Auto,Auto" ColumnDefinitions="*">
-            <Label Text="Title" FontAttributes="Bold" />
-            <Entry Grid.Row="1"
-                   x:Name="HeaderEntry"
+    <Grid Padding="16,12" RowDefinitions="Auto,Auto,*">
+
+        <!-- Title field -->
+        <Label Grid.Row="0"
+               Text="Title"
+               FontSize="11"
+               FontAttributes="Bold"
+               TextColor="#7A9C74"
+               Margin="4,0,0,4" />
+
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                Stroke="#C8DEC4"
+                StrokeThickness="1"
+                StrokeShape="{RoundRectangle CornerRadius=8}"
+                Padding="12,4"
+                Margin="0,0,0,12">
+            <Entry x:Name="HeaderEntry"
                    Placeholder="Enter title..."
+                   PlaceholderColor="#A8C4A2"
                    Text="{Binding HeadTitle, Mode=TwoWay}"
-                   ReturnType="Next" />
-        </Grid>
+                   TextColor="#1C2B18"
+                   FontAttributes="Bold"
+                   FontSize="16"
+                   ReturnType="Next"
+                   BackgroundColor="Transparent" />
+        </Border>
 
-        <Editor Grid.Row="1"
-                x:Name="BodyEditor"
-                Placeholder="Type your note..."
-                Text="{Binding Body, Mode=TwoWay}"
-                AutoSize="Disabled"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand"
-                MaxLength="20000"
-                Margin="0,8" />
+        <!-- Body field -->
+        <Border Grid.Row="2"
+                BackgroundColor="White"
+                Stroke="#C8DEC4"
+                StrokeThickness="1"
+                StrokeShape="{RoundRectangle CornerRadius=8}"
+                Padding="12,8">
+            <Editor x:Name="BodyEditor"
+                    Placeholder="Type your note..."
+                    PlaceholderColor="#A8C4A2"
+                    Text="{Binding Body, Mode=TwoWay}"
+                    TextColor="#1C2B18"
+                    FontSize="14"
+                    AutoSize="Disabled"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand"
+                    MaxLength="20000"
+                    BackgroundColor="Transparent" />
+        </Border>
 
-        <!--<Grid Grid.Row="2" ColumnDefinitions="*,*">
-            <Button Grid.Column="0"
-                    Text="Cancel"
-                    Command="{Binding CancelCommand}"
-                    Margin="0,10,10,0" />
-            <Button Grid.Column="1"
-                    Text="Create"
-                    Command="{Binding CreateCommand}"
-                    IsEnabled="{Binding CanCreate}"
-                    Margin="0,10,0,0" />
-        </Grid>-->
     </Grid>
 </ContentPage>

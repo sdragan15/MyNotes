@@ -84,7 +84,9 @@ namespace MyNotes.Application.Services
                     Id = item.Id,
                     Text = item.Text,
                     IsChecked = item.IsChecked,
-                    DateCreated = item.DateCreated
+                    DateCreated = item.DateCreated,
+                    DateDone = item.DateDone,
+                    LastUpdateTime = item.LastUpdateTime
                 }).ToList();
 
                 return itemsDto;

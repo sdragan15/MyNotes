@@ -7,68 +7,81 @@
              xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
              xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:DataType="viewmodel:NotesViewModel">
-    <Grid RowDefinitions="Auto, *, Auto">
-        <FlexLayout Grid.Row="0" 
-                    Wrap="Wrap" 
-                    Direction="Row"
-                    AlignItems="Start"
-                    JustifyContent="SpaceAround"
-                    Padding="10"
-                    BindableLayout.ItemsSource="{Binding NoteItems}">
-            <BindableLayout.ItemTemplate>
+             x:DataType="viewmodel:NotesViewModel"
+             BackgroundColor="#F3F7F2"
+             Shell.BackgroundColor="#3A5E35"
+             Shell.TitleColor="#F3F7F2"
+             Shell.ForegroundColor="#F3F7F2">
+
+    <Grid RowDefinitions="*,Auto" Padding="16,10">
+
+        <CollectionView Grid.Row="0" ItemsSource="{Binding NoteItems}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="2"
+                                 HorizontalItemSpacing="10"
+                                 VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:NotesDto">
-                    <ContentView>
-                        <Border
-                            BackgroundColor="Green"
-                            Padding="15"
-                            Stroke="#003390ff"
-                            StrokeThickness="2"
-                            StrokeShape="{RoundRectangle CornerRadius=12}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}"
-                                    Value="True">
-                                    <Setter Property="Stroke" Value="#3390ff"/>
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <VerticalStackLayout 
-                                x:Name="note" 
-                                Spacing="10" 
-                                MaximumWidthRequest="130" 
-                                MaximumHeightRequest="100"
-                                MinimumWidthRequest="50">
-
-                                <Label  Text="{Binding Header}" 
-                                    FontAttributes="Bold" 
-                                    FontSize="Header"
-                                    LineBreakMode="TailTruncation"
-                                    MaxLines="1">
-                                </Label>
-                                <Label  Text="{Binding Content}"
-                                    LineBreakMode="TailTruncation"
-                                    MaxLines="3"/>
+                    <SwipeView Margin="0,0,0,0">
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Execute">
+                                <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteNoteCommand}"
+                                               CommandParameter="{Binding .}">
+                                    <Border BackgroundColor="#C0392B"
+                                            Stroke="Transparent"
+                                            StrokeShape="{RoundRectangle CornerRadius=10}"
+                                            Padding="20,0"
+                                            Margin="6,0,0,0">
+                                        <Label Text="Delete"
+                                               TextColor="White"
+                                               FontAttributes="Bold"
+                                               FontSize="13"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="End" />
+                                    </Border>
+                                </SwipeItemView>
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <Border BackgroundColor="White"
+                                Stroke="#C8DEC4"
+                                StrokeThickness="1"
+                                StrokeShape="{RoundRectangle CornerRadius=10}"
+                                Padding="12">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="{Binding Header}"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       TextColor="#1C2B18"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1" />
+                                <BoxView HeightRequest="1" BackgroundColor="#E2EBE0" />
+                                <Label Text="{Binding Content}"
+                                       FontSize="12"
+                                       TextColor="#5C7A56"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="4" />
                             </VerticalStackLayout>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
                         </Border>
-                        <ContentView.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
-                                CommandParameter="{Binding .}" />
-                        </ContentView.GestureRecognizers>
-                        <!--<ContentView.Behaviors>
-                            <toolkit:TouchBehavior
-                                LongPressDuration="1000"
-                                LongPressCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectNoteCommand}"
-                                LongPressCommandParameter="{Binding .}"/>
-                        </ContentView.Behaviors>-->
-                    </ContentView>
-
+                    </SwipeView>
                 </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </FlexLayout>
-        <Button Grid.Row="2"
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="1"
                 Text="Create"
                 Command="{Binding CreateItemCommand}"
-                Margin="20" />
+                BackgroundColor="#4A7A41"
+                TextColor="White"
+                CornerRadius="6"
+                FontAttributes="Bold"
+                Margin="0,10,0,0" />
     </Grid>
-    
+
 </ContentPage>
