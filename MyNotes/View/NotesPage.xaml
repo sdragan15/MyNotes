@@ -13,71 +13,55 @@
                     Wrap="Wrap" 
                     Direction="Row"
                     AlignItems="Start"
-                    JustifyContent="Start"
+                    JustifyContent="SpaceAround"
                     Padding="10"
                     BindableLayout.ItemsSource="{Binding NoteItems}">
             <BindableLayout.ItemTemplate>
                 <DataTemplate x:DataType="model:NotesDto">
-                    <Border
-                        Stroke="#003390ff"
-                        StrokeThickness="2"
-                        StrokeShape="{RoundRectangle CornerRadius=12}">
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}"
-                                         Value="True">
-                                <Setter Property="Stroke" Value="#3390ff"/>
-                            </DataTrigger>
-                        </Border.Triggers>
-                        <Frame
-                            Padding="20"
-                            BackgroundColor="#588558" 
-                               HasShadow="True" 
-                               BorderColor="#30000000" 
-                               MaximumWidthRequest="150"
-                               MinimumWidthRequest="100"
-                               Margin="2">
-                            <Frame.Shadow>
-                                <Shadow  Brush="Black"
-                                        Opacity="0.5"
-                                        Radius="10"
-                                        Offset="3,3"/>
-                            </Frame.Shadow>
-                            <!--<Frame.Behaviors>
-                                <toolkit:TouchBehavior
-                                    LongPressDuration="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.SelectDuration}"
-                                    LongPressCommand="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.SelectNoteCommand}"
-                                    LongPressCommandParameter="{Binding .}"/>
-                            </Frame.Behaviors>-->
-                            <!--<Frame.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding Source={x:Reference NotesPageView}, Path=BindingContext.EditItemCommand}"
-                                    CommandParameter="{Binding .}" />
-                            </Frame.GestureRecognizers>-->
+                    <ContentView>
+                        <Border
+                            BackgroundColor="Green"
+                            Padding="15"
+                            Stroke="#003390ff"
+                            StrokeThickness="2"
+                            StrokeShape="{RoundRectangle CornerRadius=12}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}"
+                                    Value="True">
+                                    <Setter Property="Stroke" Value="#3390ff"/>
+                                </DataTrigger>
+                            </Border.Triggers>
                             <VerticalStackLayout 
-                                BackgroundColor="Red"
-
                                 x:Name="note" 
                                 Spacing="10" 
                                 MaximumWidthRequest="130" 
-                                MaximumHeightRequest="100">
+                                MaximumHeightRequest="100"
+                                MinimumWidthRequest="50">
+
                                 <Label  Text="{Binding Header}" 
-                                        FontAttributes="Bold" 
-                                        FontSize="Header"
-                                        LineBreakMode="TailTruncation"
-                                        MaxLines="1">
+                                    FontAttributes="Bold" 
+                                    FontSize="Header"
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="1">
                                 </Label>
                                 <Label  Text="{Binding Content}"
-                                        LineBreakMode="TailTruncation"
-                                        MaxLines="3"/>
-                                <!--<VerticalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
-                                         CommandParameter="{Binding .}" />
-                                </VerticalStackLayout.GestureRecognizers>-->
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="3"/>
                             </VerticalStackLayout>
-                        </Frame>
-                    </Border>
-                    
+                        </Border>
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditItemCommand}"
+                                CommandParameter="{Binding .}" />
+                        </ContentView.GestureRecognizers>
+                        <!--<ContentView.Behaviors>
+                            <toolkit:TouchBehavior
+                                LongPressDuration="1000"
+                                LongPressCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectNoteCommand}"
+                                LongPressCommandParameter="{Binding .}"/>
+                        </ContentView.Behaviors>-->
+                    </ContentView>
+
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
         </FlexLayout>

@@ -7,36 +7,71 @@
     xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
     x:DataType="viewmodel:ItemCreateViewModel"
     CanBeDismissedByTappingOutsideOfPopup="True"
-    Size="360,180">
+    Color="Transparent"
+    Size="360,210">
 
-    <Frame Padding="16" CornerRadius="12" HasShadow="True"
-           HorizontalOptions="Center" VerticalOptions="Center">
+    <Border BackgroundColor="#F3F7F2"
+            Stroke="#3A5E35"
+            StrokeThickness="1"
+            StrokeShape="{RoundRectangle CornerRadius=10}">
 
-        <VerticalStackLayout Spacing="12">
-            <Label Text="Enter text" FontAttributes="Bold" />
+        <Grid RowDefinitions="4,*">
 
-            <Entry x:Name="Input"
-                   Text="{Binding Text}"
-                   Placeholder="I should..."
-                   ReturnCommand="{Binding DoneCommand}"
-                   ReturnType="Done" />
+            <!-- Accent bar at top -->
+            <BoxView Grid.Row="0"
+                     BackgroundColor="#4A7A41"
+                     HeightRequest="4">
+                <BoxView.Clip>
+                    <RoundRectangleGeometry CornerRadius="10,10,0,0" Rect="0,0,360,4" />
+                </BoxView.Clip>
+            </BoxView>
 
-            <FlexLayout Direction="Row"
-                        AlignItems="Stretch"
-                        JustifyContent="Start">
-                <Button Text="Done" 
-                        Command="{Binding DoneCommand}" 
-                        FlexLayout.Basis="0%"
-                        FlexLayout.Grow="1"/>
-                <BoxView WidthRequest="10" BackgroundColor="Transparent" IsVisible="{Binding IsEdit}"/>
-                <Button Text="Delete"
-                        IsVisible="{Binding IsEdit}"
-                        Command="{Binding DeleteCommand}"
-                        BackgroundColor="Red"
-                        FlexLayout.Basis="0%"
-                        FlexLayout.Grow="1"/>
-            </FlexLayout>
+            <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="20,16,20,20">
 
-        </VerticalStackLayout>
-    </Frame>
+                <Label Text="New Task"
+                       FontSize="15"
+                       FontAttributes="Bold"
+                       TextColor="#1C2B18" />
+
+                <Border BackgroundColor="#E2EBE0"
+                        Padding="12,8"
+                        Stroke="Transparent"
+                        StrokeThickness="0"
+                        StrokeShape="{RoundRectangle CornerRadius=6}">
+                    <Entry x:Name="Input"
+                           Text="{Binding Text}"
+                           Placeholder="I should..."
+                           PlaceholderColor="#7A9C74"
+                           TextColor="#1C2B18"
+                           ReturnCommand="{Binding DoneCommand}"
+                           ReturnType="Done"
+                           BackgroundColor="Transparent" />
+                </Border>
+
+                <FlexLayout Direction="Row" AlignItems="Stretch" JustifyContent="Start">
+                    <Button Text="Done"
+                            Command="{Binding DoneCommand}"
+                            BackgroundColor="#4A7A41"
+                            TextColor="White"
+                            CornerRadius="6"
+                            FontAttributes="Bold"
+                            FlexLayout.Basis="0%"
+                            FlexLayout.Grow="1" />
+                    <BoxView WidthRequest="10" BackgroundColor="Transparent" IsVisible="{Binding IsEdit}" />
+                    <Button Text="Delete"
+                            IsVisible="{Binding IsEdit}"
+                            Command="{Binding DeleteCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="#C0392B"
+                            BorderColor="#C0392B"
+                            BorderWidth="1"
+                            CornerRadius="6"
+                            FontAttributes="Bold"
+                            FlexLayout.Basis="0%"
+                            FlexLayout.Grow="1" />
+                </FlexLayout>
+
+            </VerticalStackLayout>
+        </Grid>
+    </Border>
 </toolkit:Popup>
