@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MyNotes.Infrastructure.Sqlite.Data;
 using MauiApp = Microsoft.Maui.Controls.Application;
 
@@ -8,15 +8,14 @@ namespace MyNotes
     {
         private readonly TodoContext _todoContext;
 
-        public App(TodoContext todoContext)
+        public App(TodoContext todoContext, AppShell appShell)
         {
             InitializeComponent();
 
             _todoContext = todoContext;
             _todoContext.Database.Migrate();
 
-            MainPage = new AppShell();
-            
+            MainPage = appShell;
         }
     }
 }

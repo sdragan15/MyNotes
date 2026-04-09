@@ -17,7 +17,7 @@
             Command="{Binding CreateCommand}" />
     </ContentPage.ToolbarItems>
 
-    <Grid Padding="16,12" RowDefinitions="Auto,Auto,*">
+    <Grid Padding="16,12" RowDefinitions="Auto,Auto,Auto,Auto,*">
 
         <!-- Title field -->
         <Label Grid.Row="0"
@@ -45,8 +45,32 @@
                    BackgroundColor="Transparent" />
         </Border>
 
+        <!-- Category picker -->
+        <Label Grid.Row="2"
+               Text="Category"
+               FontSize="11"
+               FontAttributes="Bold"
+               TextColor="#7A9C74"
+               Margin="4,0,0,4" />
+
+        <Border Grid.Row="3"
+                BackgroundColor="White"
+                Stroke="#C8DEC4"
+                StrokeThickness="1"
+                StrokeShape="{RoundRectangle CornerRadius=8}"
+                Padding="8,0"
+                Margin="0,0,0,12">
+            <Picker ItemsSource="{Binding Categories}"
+                    SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                    ItemDisplayBinding="{Binding Name}"
+                    TextColor="#1C2B18"
+                    TitleColor="#A8C4A2"
+                    BackgroundColor="Transparent"
+                    FontSize="14" />
+        </Border>
+
         <!-- Body field -->
-        <Border Grid.Row="2"
+        <Border Grid.Row="4"
                 BackgroundColor="White"
                 Stroke="#C8DEC4"
                 StrokeThickness="1"

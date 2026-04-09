@@ -1,30 +1,53 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyNotes.Application.Model;
-using System.Collections.Generic;
+using MyNotes.Application.Services;
+using System.Collections.ObjectModel;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace MyNotes.ViewModel
 {
     public partial class NotesCreateViewModel : BaseViewModel, IQueryAttributable
     {
+        private readonly CategoryService _categoryService;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanCreate))]
         private string? body;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanCreate))]
         private string? headTitle;
+
+        [ObservableProperty]
+        private ObservableCollection<CategoryDto> categories = [];
+
+        [ObservableProperty]
+        private CategoryDto? selectedCategory;
+
         private Guid originalId = Guid.Empty;
 
         private string? _draftBody;
         private string? _draftHeadTitle;
+        private CategoryDto? _draftCategory;
         private bool _suppressDraftSave;
 
         public bool CanCreate => !string.IsNullOrWhiteSpace(Body) && !string.IsNullOrWhiteSpace(HeadTitle);
         public bool IsEditMode => originalId != Guid.Empty;
 
-        public NotesCreateViewModel() { }
+        public NotesCreateViewModel(CategoryService categoryService)
+        {
+            _categoryService = categoryService;
+            _ = LoadCategoriesAsync();
+        }
+
+        private async Task LoadCategoriesAsync()
+        {
+            var list = await _categoryService.GetAllAsync();
+            Categories = new ObservableCollection<CategoryDto>(list);
+            if (SelectedCategory == null)
+                SelectedCategory = Categories.FirstOrDefault();
+        }
 
         [RelayCommand]
         private async Task CreateAsync()
@@ -38,13 +61,16 @@ namespace MyNotes.ViewModel
                 ["id"] = originalId.ToString(),
                 ["opId"] = opId,
                 ["createdText"] = Body?.Trim() ?? string.Empty,
-                ["headTitle"] = HeadTitle?.Trim() ?? string.Empty
+                ["headTitle"] = HeadTitle?.Trim() ?? string.Empty,
+                ["categoryId"] = SelectedCategory?.Id.ToString() ?? string.Empty,
+                ["categoryName"] = SelectedCategory?.Name ?? string.Empty
             });
 
             if (originalId == Guid.Empty)
             {
                 _draftBody = null;
                 _draftHeadTitle = null;
+                _draftCategory = null;
             }
 
             _suppressDraftSave = false;
@@ -54,13 +80,13 @@ namespace MyNotes.ViewModel
         [RelayCommand]
         private Task CancelAsync() => Shell.Current.GoToAsync("..");
 
-        // Called from page's OnDisappearing — covers back arrow, cancel, and any other exit
         public void OnDisappearing()
         {
             if (_suppressDraftSave || originalId != Guid.Empty) return;
 
             _draftBody = Body;
             _draftHeadTitle = HeadTitle;
+            _draftCategory = SelectedCategory;
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -84,6 +110,10 @@ namespace MyNotes.ViewModel
             originalId = originalItem.Id;
             HeadTitle = originalItem.Header;
             Body = originalItem.Content;
+            SelectedCategory = originalItem.CategoryId.HasValue
+                ? Categories.FirstOrDefault(c => c.Id == originalItem.CategoryId.Value)
+                  ?? Categories.FirstOrDefault()
+                : Categories.FirstOrDefault();
         }
 
         private void RestoreOrReset()
@@ -91,6 +121,7 @@ namespace MyNotes.ViewModel
             originalId = Guid.Empty;
             HeadTitle = _draftHeadTitle ?? "";
             Body = _draftBody ?? "";
+            SelectedCategory = _draftCategory ?? Categories.FirstOrDefault();
         }
 
         private void Reset()
@@ -98,6 +129,7 @@ namespace MyNotes.ViewModel
             originalId = Guid.Empty;
             HeadTitle = "";
             Body = "";
+            SelectedCategory = Categories.FirstOrDefault();
         }
     }
 }

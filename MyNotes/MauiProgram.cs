@@ -7,6 +7,7 @@ using MyNotes.Infrastructure.Sqlite.Data;
 using MyNotes.Infrastucture.Sqlite.Repositories;
 using MyNotes.View;
 using MyNotes.ViewModel;
+using CategoryRepository = MyNotes.Infrastucture.Sqlite.Repositories.CategoryRepository;
 
 namespace MyNotes
 {
@@ -28,7 +29,9 @@ namespace MyNotes
             builder.Services.AddTransient<ItemCreateViewModel>();
             builder.Services.AddTransient<NotesViewModel>();
             builder.Services.AddTransient<NotesCreateViewModel>();
+            builder.Services.AddSingleton<AppShellViewModel>();
 
+            builder.Services.AddSingleton<AppShell>();
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<NotesPage>();
             builder.Services.AddSingleton<ItemCreatePage>();
@@ -36,8 +39,10 @@ namespace MyNotes
 
             builder.Services.AddTransient<IItemRepository, ItemRepository>();
             builder.Services.AddTransient<INotesRepository, NotesRepository>();
+            builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
             builder.Services.AddTransient<ItemService>();
             builder.Services.AddTransient<NotesService>();
+            builder.Services.AddTransient<CategoryService>();
 
             #region Database
 

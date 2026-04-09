@@ -1,8 +1,10 @@
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MyNotes.Application.Model;
 using MyNotes.Application.Services;
+using MyNotes.Messages;
 using MyNotes.View;
 using System.Collections.ObjectModel;
 using System.Text.Json;
@@ -19,6 +21,10 @@ namespace MyNotes.ViewModel
         private string _lastOpId;
 
         private readonly List<NotesDto> _allNotes = [];
+        private int? _filterCategoryId;
+
+        [ObservableProperty]
+        private string pageTitle = "Notes";
 
         [ObservableProperty]
         private bool selectionMode = false;
@@ -30,11 +36,22 @@ namespace MyNotes.ViewModel
             _notesService = notesService;
             SelectionMode = false;
             SelectDuration = 500;
+
+            WeakReferenceMessenger.Default.Register<CategoryFilterChangedMessage>(this, (_, m) =>
+            {
+                _filterCategoryId = m.CategoryId;
+                PageTitle = m.CategoryName ?? "Notes";
+                RebuildGroups();
+            });
         }
 
         private void RebuildGroups()
         {
-            var groups = _allNotes
+            var filtered = _filterCategoryId.HasValue
+                ? _allNotes.Where(n => n.CategoryId == _filterCategoryId)
+                : _allNotes;
+
+            var groups = filtered
                 .GroupBy(n => n.DateCreated.Date)
                 .OrderByDescending(g => g.Key)
                 .Select(g => new NotesGroup(g.Key, g.OrderByDescending(n => n.DateCreated)))
@@ -121,6 +138,11 @@ namespace MyNotes.ViewModel
 
             existingItem.Header = title;
             existingItem.Content = body.Trim();
+            if (query.TryGetValue("categoryId", out var catIdObj) && int.TryParse(catIdObj?.ToString(), out var catId))
+            {
+                existingItem.CategoryId = catId;
+                existingItem.CategoryName = query.TryGetValue("categoryName", out var catNameObj) ? catNameObj?.ToString() ?? string.Empty : string.Empty;
+            }
             RebuildGroups();
 
             await _notesService.UpdateNoteAsync(existingItem);
@@ -142,10 +164,20 @@ namespace MyNotes.ViewModel
             if (string.IsNullOrWhiteSpace(body) || string.IsNullOrWhiteSpace(title)) return;
             if (opId.Equals(_lastOpId)) return;
 
+            int? categoryId = null;
+            string categoryName = string.Empty;
+            if (query.TryGetValue("categoryId", out var catIdObj) && int.TryParse(catIdObj?.ToString(), out var catId))
+            {
+                categoryId = catId;
+                categoryName = query.TryGetValue("categoryName", out var catNameObj) ? catNameObj?.ToString() ?? string.Empty : string.Empty;
+            }
+
             var newNote = new NotesDto
             {
                 Header = title,
                 Content = body.Trim(),
+                CategoryId = categoryId,
+                CategoryName = categoryName,
                 DateCreated = DateTime.Now
             };
 

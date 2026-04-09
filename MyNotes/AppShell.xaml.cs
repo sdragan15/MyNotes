@@ -1,10 +1,13 @@
-﻿namespace MyNotes
+using MyNotes.ViewModel;
+
+namespace MyNotes
 {
     public partial class AppShell : Shell
     {
-        public AppShell()
+        public AppShell(AppShellViewModel viewModel)
         {
             InitializeComponent();
+            BindingContext = viewModel;
 
             FlyoutBehavior = (DeviceInfo.Idiom == DeviceIdiom.Desktop || DeviceInfo.Idiom == DeviceIdiom.Tablet)
                         ? FlyoutBehavior.Locked
