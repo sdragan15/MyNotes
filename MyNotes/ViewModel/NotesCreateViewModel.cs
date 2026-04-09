@@ -1,15 +1,9 @@
-﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyNotes.Application.Model;
-using MyNotes.View;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MauiApp = Microsoft.Maui.Controls.Application;
 
 namespace MyNotes.ViewModel
 {
@@ -23,17 +17,21 @@ namespace MyNotes.ViewModel
         private string? headTitle;
         private Guid originalId = Guid.Empty;
 
-        public bool CanCreate => !string.IsNullOrWhiteSpace(Body) && !string.IsNullOrWhiteSpace(HeadTitle);
+        private string? _draftBody;
+        private string? _draftHeadTitle;
+        private bool _suppressDraftSave;
 
-        public NotesCreateViewModel()
-        {
-            
-        }
+        public bool CanCreate => !string.IsNullOrWhiteSpace(Body) && !string.IsNullOrWhiteSpace(HeadTitle);
+        public bool IsEditMode => originalId != Guid.Empty;
+
+        public NotesCreateViewModel() { }
 
         [RelayCommand]
         private async Task CreateAsync()
         {
             var opId = Guid.NewGuid().ToString("N");
+            _suppressDraftSave = true;
+
             await Shell.Current.GoToAsync("..", new Dictionary<string, object>
             {
                 ["action"] = originalId == Guid.Empty ? "create" : "update",
@@ -43,32 +41,42 @@ namespace MyNotes.ViewModel
                 ["headTitle"] = HeadTitle?.Trim() ?? string.Empty
             });
 
+            if (originalId == Guid.Empty)
+            {
+                _draftBody = null;
+                _draftHeadTitle = null;
+            }
+
+            _suppressDraftSave = false;
             Reset();
         }
 
         [RelayCommand]
         private Task CancelAsync() => Shell.Current.GoToAsync("..");
 
+        // Called from page's OnDisappearing — covers back arrow, cancel, and any other exit
+        public void OnDisappearing()
+        {
+            if (_suppressDraftSave || originalId != Guid.Empty) return;
+
+            _draftBody = Body;
+            _draftHeadTitle = HeadTitle;
+        }
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            NotesDto? originalItem;
-
             bool hasItem = query.TryGetValue("item", out var itemObj);
-            
+
             if (!hasItem)
             {
+                RestoreOrReset();
                 return;
             }
 
-            originalItem = JsonSerializer.Deserialize<NotesDto>(itemObj?.ToString() ?? string.Empty);
-
-            if (originalItem == null)
-            {
-                return;
-            }
+            var originalItem = JsonSerializer.Deserialize<NotesDto>(itemObj?.ToString() ?? string.Empty);
+            if (originalItem == null) return;
 
             PopulateFrom(originalItem);
-
         }
 
         public void PopulateFrom(NotesDto originalItem)
@@ -76,6 +84,13 @@ namespace MyNotes.ViewModel
             originalId = originalItem.Id;
             HeadTitle = originalItem.Header;
             Body = originalItem.Content;
+        }
+
+        private void RestoreOrReset()
+        {
+            originalId = Guid.Empty;
+            HeadTitle = _draftHeadTitle ?? "";
+            Body = _draftBody ?? "";
         }
 
         private void Reset()

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="MyNotes.View.DeleteNotePopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    CanBeDismissedByTappingOutsideOfPopup="True"
+    Color="Transparent"
+    Size="300,155">
+
+    <Border BackgroundColor="#F3F7F2"
+            Stroke="#3A5E35"
+            StrokeThickness="1"
+            StrokeShape="{RoundRectangle CornerRadius=10}">
+
+        <Grid RowDefinitions="4,*">
+
+            <!-- Accent bar at top -->
+            <BoxView Grid.Row="0"
+                     BackgroundColor="#4A7A41"
+                     HeightRequest="4">
+                <BoxView.Clip>
+                    <RoundRectangleGeometry CornerRadius="10,10,0,0" Rect="0,0,300,4" />
+                </BoxView.Clip>
+            </BoxView>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="20,16,20,12">
+
+                <Label x:Name="TitleLabel"
+                       Text="Delete note"
+                       FontSize="15"
+                       FontAttributes="Bold"
+                       TextColor="#1C2B18" />
+
+                <Label x:Name="MessageLabel"
+                       FontSize="13"
+                       TextColor="#5C7A56" />
+
+                <FlexLayout Direction="Row" AlignItems="Stretch" JustifyContent="Start" Margin="0,4,0,0">
+                    <Button Text="Cancel"
+                            Clicked="OnCancelClicked"
+                            BackgroundColor="Transparent"
+                            TextColor="#4A7A41"
+                            BorderColor="#4A7A41"
+                            BorderWidth="1"
+                            CornerRadius="6"
+                            FontAttributes="Bold"
+                            FlexLayout.Basis="0%"
+                            FlexLayout.Grow="1" />
+                    <BoxView WidthRequest="10" BackgroundColor="Transparent" />
+                    <Button Text="Delete"
+                            Clicked="OnDeleteClicked"
+                            BackgroundColor="#C0392B"
+                            TextColor="White"
+                            CornerRadius="6"
+                            FontAttributes="Bold"
+                            FlexLayout.Basis="0%"
+                            FlexLayout.Grow="1" />
+                </FlexLayout>
+
+            </VerticalStackLayout>
+        </Grid>
+    </Border>
+</toolkit:Popup>

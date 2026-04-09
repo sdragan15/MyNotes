@@ -72,13 +72,10 @@ namespace MyNotes.ViewModel
         {
             if (note == null) return;
 
-            bool confirmed = await Shell.Current.DisplayAlert(
-                "Delete note",
-                $"Delete \"{note.Header}\"?",
-                "Delete",
-                "Cancel");
+            var popup = new DeleteNotePopup(note.Header ?? string.Empty);
+            var result = await MauiApp.Current!.Windows[0].Page!.ShowPopupAsync(popup);
 
-            if (!confirmed) return;
+            if (result is not true) return;
 
             NoteItems.Remove(note);
             await _notesService.DeleteNoteAsync(note.Id);

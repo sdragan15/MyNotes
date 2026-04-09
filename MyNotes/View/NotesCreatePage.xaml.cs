@@ -14,13 +14,27 @@ namespace MyNotes.View
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            var vm = (NotesCreateViewModel)BindingContext;
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 await Task.Delay(50);
-                HeaderEntry.Focus();
-                var len = HeaderEntry?.Text?.Length ?? 0;
-                HeaderEntry.CursorPosition = len;
+                if (vm.IsEditMode)
+                {
+                    BodyEditor.Focus();
+                    BodyEditor.CursorPosition = BodyEditor.Text?.Length ?? 0;
+                }
+                else
+                {
+                    HeaderEntry.Focus();
+                    HeaderEntry.CursorPosition = HeaderEntry.Text?.Length ?? 0;
+                }
             });
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            ((NotesCreateViewModel)BindingContext).OnDisappearing();
         }
     }
 }
