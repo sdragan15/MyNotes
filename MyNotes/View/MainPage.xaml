@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
@@ -16,8 +16,18 @@
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Spacing="2">
 
-                <!-- Active items -->
-                <CollectionView ItemsSource="{Binding TodoItems}">
+                <!-- Active todos grouped by date -->
+                <CollectionView ItemsSource="{Binding TodoGroups}" IsGrouped="True">
+                    <CollectionView.GroupHeaderTemplate>
+                        <DataTemplate x:DataType="viewmodel:TodoGroup">
+                            <Grid ColumnDefinitions="*,Auto,*" Margin="0,6,0,2">
+                                <BoxView Grid.Column="0" HeightRequest="1" BackgroundColor="#C8DEC4" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding DateLabel}"
+                                       TextColor="#7A9C74" FontSize="11" Margin="10,0" VerticalOptions="Center" />
+                                <BoxView Grid.Column="2" HeightRequest="1" BackgroundColor="#C8DEC4" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.GroupHeaderTemplate>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:ItemDto">
                             <Grid Padding="4,6" ColumnDefinitions="Auto,*">
@@ -42,20 +52,18 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <!-- Completed section divider -->
-                <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="10" Margin="0,14,0,6">
-                    <BoxView Grid.Column="0" HeightRequest="1" BackgroundColor="#A8C4A2" VerticalOptions="Center" />
-                    <Label Grid.Column="1"
-                           Text="Completed"
-                           FontSize="11"
-                           FontAttributes="Bold"
-                           TextColor="#7A9C74"
-                           VerticalOptions="Center" />
-                    <BoxView Grid.Column="2" HeightRequest="1" BackgroundColor="#A8C4A2" VerticalOptions="Center" />
-                </Grid>
-
-                <!-- Done items -->
-                <CollectionView ItemsSource="{Binding DoneItems}">
+                <!-- Done todos grouped by completion date -->
+                <CollectionView ItemsSource="{Binding DoneGroups}" IsGrouped="True">
+                    <CollectionView.GroupHeaderTemplate>
+                        <DataTemplate x:DataType="viewmodel:TodoGroup">
+                            <Grid ColumnDefinitions="*,Auto,*" Margin="0,6,0,2">
+                                <BoxView Grid.Column="0" HeightRequest="1" BackgroundColor="#C8DEC4" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding DateLabel}"
+                                       TextColor="#7A9C74" FontSize="11" Margin="10,0" VerticalOptions="Center" />
+                                <BoxView Grid.Column="2" HeightRequest="1" BackgroundColor="#C8DEC4" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.GroupHeaderTemplate>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:ItemDto">
                             <Grid Padding="4,6" ColumnDefinitions="Auto,*">

@@ -22,7 +22,8 @@ namespace MyNotes.Application.Services
                     Title = item.Header,
                     Body = item.Content,
                     CategoryId = item.CategoryId,
-                    DateCreated = DateTime.UtcNow
+                    DateCreated = DateTime.UtcNow,
+                    LastUpdateTime = DateTime.UtcNow
                 };
                 await _notesRepository.AddAsync(itemEntity);
             }
@@ -42,6 +43,7 @@ namespace MyNotes.Application.Services
                     existingNote.Title = item.Header;
                     existingNote.Body = item.Content;
                     existingNote.CategoryId = item.CategoryId;
+                    existingNote.LastUpdateTime = DateTime.UtcNow;
                     await _notesRepository.UpdateAsync(existingNote);
                 }
             }
@@ -77,7 +79,8 @@ namespace MyNotes.Application.Services
                     Content = item.Body,
                     CategoryId = item.CategoryId,
                     CategoryName = item.Category?.Name ?? string.Empty,
-                    DateCreated = item.DateCreated
+                    DateCreated = item.DateCreated,
+                    LastUpdateTime = item.LastUpdateTime == default ? item.DateCreated : item.LastUpdateTime
                 }).ToList();
             }
             catch (Exception ex)

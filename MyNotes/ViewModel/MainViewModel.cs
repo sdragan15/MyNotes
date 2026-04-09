@@ -1,54 +1,55 @@
-﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyNotes.Application.Model;
 using MyNotes.Application.Services;
 using MyNotes.View;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MauiApp = Microsoft.Maui.Controls.Application;
 
 namespace MyNotes.ViewModel
 {
     public partial class MainViewModel : BaseViewModel
     {
-        ItemService _itemService;
-        public ObservableCollection<ItemDto> Items { get; set; } = [];
-        public ObservableCollection<ItemDto> TodoItems { get; } = [];
-        public ObservableCollection<ItemDto> DoneItems { get; } = [];
+        private readonly ItemService _itemService;
+        private readonly List<ItemDto> _allItems = [];
 
+        [ObservableProperty] private ObservableCollection<TodoGroup> todoGroups = [];
+        [ObservableProperty] private ObservableCollection<TodoGroup> doneGroups = [];
         [ObservableProperty] private bool isSidebarExpanded = true;
         [ObservableProperty] private string selectedSection = "Todos";
 
         public double SidebarWidth => IsSidebarExpanded ? 200 : 60;
 
-        partial void OnIsSidebarExpandedChanged(bool value)
-        {
-            OnPropertyChanged(nameof(SidebarWidth));
-        }
-
-        [RelayCommand]
-        public void ToggleSidebar() => IsSidebarExpanded = !IsSidebarExpanded;
-        [RelayCommand]
-        public void ShowTodos()
-        {
-            SelectedSection = "Todos";
-            //Shell.Current.GoToAsync($"{}");
-        }
-        [RelayCommand]
-        public void ShowNotes() => SelectedSection = "Notes";
+        partial void OnIsSidebarExpandedChanged(bool value) => OnPropertyChanged(nameof(SidebarWidth));
 
         public MainViewModel(ItemService itemService)
         {
             Title = "Todo list";
             _itemService = itemService;
-            TodoItems = new(Items.Where(x => !x.IsChecked).OrderByDescending(x => x.LastUpdateTime));
-            DoneItems = new(Items.Where(x => x.IsChecked).OrderByDescending(x => x.LastUpdateTime));
+        }
+
+        private void RebuildTodoGroups()
+        {
+            var groups = _allItems
+                .Where(i => !i.IsChecked)
+                .GroupBy(i => i.LastUpdateTime.Date)
+                .OrderByDescending(g => g.Key)
+                .Select(g => new TodoGroup(g.Key, g.OrderByDescending(i => i.LastUpdateTime)))
+                .ToList();
+            TodoGroups = new ObservableCollection<TodoGroup>(groups);
+        }
+
+        private void RebuildDoneGroups()
+        {
+            var groups = _allItems
+                .Where(i => i.IsChecked)
+                .GroupBy(i => i.LastUpdateTime.Date)
+                .OrderByDescending(g => g.Key)
+                .Select(g => new TodoGroup(g.Key, g.OrderByDescending(i => i.LastUpdateTime)))
+                .ToList();
+            DoneGroups = new ObservableCollection<TodoGroup>(groups);
         }
 
         [RelayCommand]
@@ -58,98 +59,75 @@ namespace MyNotes.ViewModel
             foreach (var item in items)
             {
                 Attach(item);
-                Items.Add(item);
-                if (item.IsChecked)
-                {
-                    DoneItems.Insert(0, item);
-                }
-                else
-                {
-                    TodoItems.Insert(0, item);
-                }
+                _allItems.Add(item);
             }
+            RebuildTodoGroups();
+            RebuildDoneGroups();
         }
 
         [RelayCommand]
         public async Task OpenPopup()
         {
-            ItemCreateViewModel itemCreateViewModel = new ItemCreateViewModel() { IsEdit = false };
-            var result = (ItemEditResult?)await MauiApp.Current.MainPage.ShowPopupAsync(new ItemCreatePage(itemCreateViewModel));
-            if(result?.Action == ItemEditAction.Save && !string.IsNullOrWhiteSpace(result.Text))
+            var vm = new ItemCreateViewModel { IsEdit = false };
+            var result = (ItemEditResult?)await MauiApp.Current.MainPage.ShowPopupAsync(new ItemCreatePage(vm));
+            if (result?.Action == ItemEditAction.Save && !string.IsNullOrWhiteSpace(result.Text))
             {
                 var newItem = new ItemDto { Text = result.Text };
-                await AddItem(newItem);
+                Attach(newItem);
+                _allItems.Insert(0, newItem);
+                RebuildTodoGroups();
                 await _itemService.AddItemAsync(newItem);
             }
-
         }
 
         [RelayCommand]
         public async Task EditItem(ItemDto item)
         {
-            // pass existing text into popup VM
-            ItemCreateViewModel itemCreateViewModel = new ItemCreateViewModel() { IsEdit = true, Text = item.Text };
-            var popup = new ItemCreatePage(itemCreateViewModel);
+            var vm = new ItemCreateViewModel { IsEdit = true, Text = item.Text };
+            var result = (ItemEditResult?)await MauiApp.Current.MainPage.ShowPopupAsync(new ItemCreatePage(vm));
+            if (result == null) return;
 
-            var result = (ItemEditResult?)await MauiApp.Current.MainPage.ShowPopupAsync(new ItemCreatePage(itemCreateViewModel));
-            if(result == null) return;
-
-            if (result!.Action == ItemEditAction.Save && !string.IsNullOrWhiteSpace(result.Text))
+            if (result.Action == ItemEditAction.Save && !string.IsNullOrWhiteSpace(result.Text))
             {
                 item.Text = result.Text;
                 await _itemService.UpdateItemAsync(item);
             }
-            else if (result!.Action.Equals(ItemEditAction.Delete))
+            else if (result.Action == ItemEditAction.Delete)
             {
-                await RemoveItem(item);
+                Detach(item);
+                _allItems.Remove(item);
+                RebuildTodoGroups();
+                RebuildDoneGroups();
                 await _itemService.DeleteItemAsync(item.Id);
             }
         }
 
-        public async Task AddItem(ItemDto item)
-        {
-            Attach(item);
-            Items.Add(item);
-            TodoItems.Insert(0, item);
-        }
+        [RelayCommand]
+        public void ToggleSidebar() => IsSidebarExpanded = !IsSidebarExpanded;
+        [RelayCommand]
+        public void ShowTodos() => SelectedSection = "Todos";
+        [RelayCommand]
+        public void ShowNotes() => SelectedSection = "Notes";
 
-        public async Task RemoveItem(ItemDto item)
-        {
-            Detach(item);
-            Items.Remove(item);
-            TodoItems.Remove(item);
-            DoneItems.Remove(item);
-        }
-
-        public async Task ChackedChanged(ItemDto item)
+        private async Task CheckedChanged(ItemDto item)
         {
             if (item.IsChecked)
             {
-                await Checked(item);
+                item.DateDone = DateTime.UtcNow;
+                item.LastUpdateTime = DateTime.UtcNow;
+                RebuildTodoGroups();
+                RebuildDoneGroups();
+                await _itemService.UpdateItemAsync(item);
             }
-
-            if (!item.IsChecked)
+            else
             {
-                await UnChecked(item);
+                item.DateDone = null;
+                item.LastUpdateTime = DateTime.UtcNow;
+                RebuildTodoGroups();
+                RebuildDoneGroups();
+                await _itemService.UpdateItemAsync(item);
             }
         }
-
-        private async Task Checked(ItemDto item)
-        {
-            item.DateDone = DateTime.UtcNow;
-            TodoItems.Remove(item);
-            DoneItems.Insert(0, item);
-            await _itemService.UpdateItemAsync(item);
-        }
-
-        private async Task UnChecked(ItemDto item)
-        {
-            TodoItems.Insert(0, item);
-            DoneItems.Remove(item);
-            await _itemService.UpdateItemAsync(item);
-        }
-
-
 
         private void Attach(ItemDto item) => item.PropertyChanged += OnItemPropertyChanged;
         private void Detach(ItemDto item) => item.PropertyChanged -= OnItemPropertyChanged;
@@ -159,12 +137,8 @@ namespace MyNotes.ViewModel
             if (sender is not ItemDto item) return;
             if (e.PropertyName == nameof(ItemDto.IsChecked))
             {
-                // osiguraj se da si na UI threadu
-                Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(async () =>
-                   await ChackedChanged(item)
-                );
+                MainThread.BeginInvokeOnMainThread(async () => await CheckedChanged(item));
             }
         }
-
     }
 }

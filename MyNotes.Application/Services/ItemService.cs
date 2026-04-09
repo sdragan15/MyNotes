@@ -26,7 +26,8 @@ namespace MyNotes.Application.Services
                 {
                     Text = item.Text,
                     IsChecked = item.IsChecked,
-                    DateCreated = DateTime.UtcNow
+                    DateCreated = DateTime.UtcNow,
+                    LastUpdateTime = DateTime.UtcNow
                 };
                 await _itemRepository.AddAsync(itemEntity);
             }
@@ -47,6 +48,8 @@ namespace MyNotes.Application.Services
                 {
                     existingItem.Text = item.Text;
                     existingItem.IsChecked = item.IsChecked;
+                    existingItem.LastUpdateTime = item.LastUpdateTime;
+                    existingItem.DateDone = item.DateDone;
                     await _itemRepository.UpdateAsync(existingItem);
                 }
             }
@@ -86,7 +89,7 @@ namespace MyNotes.Application.Services
                     IsChecked = item.IsChecked,
                     DateCreated = item.DateCreated,
                     DateDone = item.DateDone,
-                    LastUpdateTime = item.LastUpdateTime
+                    LastUpdateTime = item.LastUpdateTime == default ? item.DateCreated : item.LastUpdateTime
                 }).ToList();
 
                 return itemsDto;

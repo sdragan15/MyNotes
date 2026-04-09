@@ -20,6 +20,7 @@ namespace MyNotes.Application.Model
         public bool isSelected;
         public int? CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
+        public DateTime LastUpdateTime { get; set; }
 
         public NotesDto()
         {

@@ -54,9 +54,9 @@ namespace MyNotes.ViewModel
                 : _allNotes;
 
             var groups = filtered
-                .GroupBy(n => n.DateCreated.Date)
+                .GroupBy(n => n.LastUpdateTime.Date)
                 .OrderByDescending(g => g.Key)
-                .Select(g => new NotesGroup(g.Key, g.OrderByDescending(n => n.DateCreated)))
+                .Select(g => new NotesGroup(g.Key, g.OrderByDescending(n => n.LastUpdateTime)))
                 .ToList();
 
             NoteItems = new ObservableCollection<NotesGroup>(groups);
@@ -144,6 +144,7 @@ namespace MyNotes.ViewModel
 
             existingItem.Header = title;
             existingItem.Content = body.Trim();
+            existingItem.LastUpdateTime = DateTime.Now;
             if (query.TryGetValue("categoryId", out var catIdObj) && int.TryParse(catIdObj?.ToString(), out var catId))
             {
                 existingItem.CategoryId = catId;
@@ -184,7 +185,8 @@ namespace MyNotes.ViewModel
                 Content = body.Trim(),
                 CategoryId = categoryId,
                 CategoryName = categoryName,
-                DateCreated = DateTime.Now
+                DateCreated = DateTime.Now,
+                LastUpdateTime = DateTime.Now
             };
 
             _allNotes.Insert(0, newNote);
