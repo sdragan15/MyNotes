@@ -14,5 +14,6 @@ namespace MyNotes.Domain.Interfaces
         Task DeleteAsync(Notes item);
         Task<Notes?> GetByIdAsync(Guid id);
         Task<List<Notes>> GetAllAsync();
+        Task<List<Notes>> GetAllWithCategoryAsync();
     }
 }

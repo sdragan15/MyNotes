@@ -18,6 +18,8 @@ namespace MyNotes.Domain.Entities
         public DateTime DateCreated { get; set; }
         public DateTime? DateDone { get; set; }
         public DateTime LastUpdateTime { get; set; }
+        public int? CategoryId { get; set; }
+        public NoteCategory? Category { get; set; }
 
         public Notes()
         {

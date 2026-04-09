@@ -1,11 +1,6 @@
-﻿using MyNotes.Application.Model;
+using MyNotes.Application.Model;
 using MyNotes.Domain.Entities;
 using MyNotes.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyNotes.Application.Services
 {
@@ -26,16 +21,15 @@ namespace MyNotes.Application.Services
                 {
                     Title = item.Header,
                     Body = item.Content,
+                    CategoryId = item.CategoryId,
                     DateCreated = DateTime.UtcNow
                 };
                 await _notesRepository.AddAsync(itemEntity);
             }
             catch (Exception ex)
             {
-                var msg = ex.InnerException?.Message;
                 throw new ApplicationException("An error occurred while adding the note.", ex);
             }
-
         }
 
         public async Task UpdateNoteAsync(NotesDto item)
@@ -47,6 +41,7 @@ namespace MyNotes.Application.Services
                 {
                     existingNote.Title = item.Header;
                     existingNote.Body = item.Content;
+                    existingNote.CategoryId = item.CategoryId;
                     await _notesRepository.UpdateAsync(existingNote);
                 }
             }
@@ -62,9 +57,7 @@ namespace MyNotes.Application.Services
             {
                 var existingNote = await _notesRepository.GetByIdAsync(itemId);
                 if (existingNote != null)
-                {
                     await _notesRepository.DeleteAsync(existingNote);
-                }
             }
             catch (Exception ex)
             {
@@ -76,22 +69,21 @@ namespace MyNotes.Application.Services
         {
             try
             {
-                var notes = await _notesRepository.GetAllAsync();
-                var notesDto = notes.Select(item => new NotesDto
+                var notes = await _notesRepository.GetAllWithCategoryAsync();
+                return notes.Select(item => new NotesDto
                 {
                     Id = item.Id,
                     Header = item.Title,
                     Content = item.Body,
+                    CategoryId = item.CategoryId,
+                    CategoryName = item.Category?.Name ?? string.Empty,
                     DateCreated = item.DateCreated
                 }).ToList();
-
-                return notesDto;
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("An error occurred while retrieving notes.", ex);
             }
-
         }
     }
 }

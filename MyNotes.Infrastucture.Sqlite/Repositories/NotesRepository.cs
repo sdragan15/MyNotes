@@ -33,8 +33,12 @@ namespace MyNotes.Infrastucture.Sqlite.Repositories
 
         public async Task<List<Notes>> GetAllAsync()
         {
-            var notes = await _context.Notes.ToListAsync();
-            return notes;
+            return await _context.Notes.ToListAsync();
+        }
+
+        public async Task<List<Notes>> GetAllWithCategoryAsync()
+        {
+            return await _context.Notes.Include(n => n.Category).ToListAsync();
         }
 
         public async Task<Notes?> GetByIdAsync(Guid id)

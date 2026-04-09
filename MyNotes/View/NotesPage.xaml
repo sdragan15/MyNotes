@@ -15,13 +15,33 @@
 
     <Grid RowDefinitions="*,Auto" Padding="16,10">
 
-        <CollectionView Grid.Row="0" ItemsSource="{Binding NoteItems}">
+        <CollectionView Grid.Row="0" ItemsSource="{Binding NoteItems}" IsGrouped="True">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
                                  Span="2"
                                  HorizontalItemSpacing="10"
                                  VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate x:DataType="viewmodel:NotesGroup">
+                    <Grid ColumnDefinitions="*,Auto,*" Margin="0,6,0,2">
+                        <BoxView Grid.Column="0"
+                                 HeightRequest="1"
+                                 BackgroundColor="#C8DEC4"
+                                 VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding DateLabel}"
+                               TextColor="#7A9C74"
+                               FontSize="11"
+                               Margin="10,0"
+                               VerticalOptions="Center" />
+                        <BoxView Grid.Column="2"
+                                 HeightRequest="1"
+                                 BackgroundColor="#C8DEC4"
+                                 VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:NotesDto">
                     <SwipeView Margin="0,0,0,0">

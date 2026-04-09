@@ -18,6 +18,8 @@ namespace MyNotes.Application.Model
         public DateTime dateCreated;
         [ObservableProperty]
         public bool isSelected;
+        public int? CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
 
         public NotesDto()
         {
