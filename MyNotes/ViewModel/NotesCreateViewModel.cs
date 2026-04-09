@@ -95,7 +95,11 @@ namespace MyNotes.ViewModel
 
             if (!hasItem)
             {
-                RestoreOrReset();
+                int? defaultCategoryId = null;
+                if (query.TryGetValue("defaultCategoryId", out var defObj) && int.TryParse(defObj?.ToString(), out var defId))
+                    defaultCategoryId = defId;
+
+                RestoreOrReset(defaultCategoryId);
                 return;
             }
 
@@ -116,12 +120,18 @@ namespace MyNotes.ViewModel
                 : Categories.FirstOrDefault();
         }
 
-        private void RestoreOrReset()
+        private void RestoreOrReset(int? defaultCategoryId = null)
         {
             originalId = Guid.Empty;
             HeadTitle = _draftHeadTitle ?? "";
             Body = _draftBody ?? "";
-            SelectedCategory = _draftCategory ?? Categories.FirstOrDefault();
+
+            if (_draftCategory != null)
+                SelectedCategory = _draftCategory;
+            else if (defaultCategoryId.HasValue)
+                SelectedCategory = Categories.FirstOrDefault(c => c.Id == defaultCategoryId.Value) ?? Categories.FirstOrDefault();
+            else
+                SelectedCategory = Categories.FirstOrDefault();
         }
 
         private void Reset()

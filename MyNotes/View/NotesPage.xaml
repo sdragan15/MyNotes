@@ -7,15 +7,33 @@
              xmlns:model="clr-namespace:MyNotes.Application.Model;assembly=MyNotes.Application"
              xmlns:viewmodel="clr-namespace:MyNotes.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:MyNotes.Converters"
              x:DataType="viewmodel:NotesViewModel"
              BackgroundColor="#F3F7F2"
              Shell.BackgroundColor="#3A5E35"
              Shell.TitleColor="#F3F7F2"
              Shell.ForegroundColor="#F3F7F2">
 
+    <ContentPage.Resources>
+        <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+    </ContentPage.Resources>
+
     <Grid RowDefinitions="*,Auto" Padding="16,10">
 
         <CollectionView Grid.Row="0" ItemsSource="{Binding NoteItems}" IsGrouped="True">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8">
+                    <Label Text="No notes here"
+                           TextColor="#5C7A56"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label Text="Tap Create to add your first note"
+                           TextColor="#A8C4A2"
+                           FontSize="13"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
                                  Span="2"
@@ -82,6 +100,16 @@
                                        TextColor="#5C7A56"
                                        LineBreakMode="TailTruncation"
                                        MaxLines="4" />
+                                <Border BackgroundColor="#E2EBE0"
+                                        Stroke="Transparent"
+                                        StrokeShape="{RoundRectangle CornerRadius=4}"
+                                        Padding="6,2"
+                                        HorizontalOptions="Start"
+                                        IsVisible="{Binding CategoryName, Converter={StaticResource StringNotEmptyConverter}}">
+                                    <Label Text="{Binding CategoryName}"
+                                           FontSize="10"
+                                           TextColor="#5C7A56" />
+                                </Border>
                             </VerticalStackLayout>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer

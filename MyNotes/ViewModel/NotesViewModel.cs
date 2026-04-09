@@ -22,6 +22,7 @@ namespace MyNotes.ViewModel
 
         private readonly List<NotesDto> _allNotes = [];
         private int? _filterCategoryId;
+        private string? _filterCategoryName;
 
         [ObservableProperty]
         private string pageTitle = "Notes";
@@ -40,6 +41,7 @@ namespace MyNotes.ViewModel
             WeakReferenceMessenger.Default.Register<CategoryFilterChangedMessage>(this, (_, m) =>
             {
                 _filterCategoryId = m.CategoryId;
+                _filterCategoryName = m.CategoryName;
                 PageTitle = m.CategoryName ?? "Notes";
                 RebuildGroups();
             });
@@ -84,7 +86,11 @@ namespace MyNotes.ViewModel
         [RelayCommand]
         public async Task CreateItem()
         {
-            await Shell.Current.GoToAsync(nameof(NotesCreatePage));
+            var query = new Dictionary<string, object>();
+            if (_filterCategoryId.HasValue)
+                query["defaultCategoryId"] = _filterCategoryId.Value.ToString();
+
+            await Shell.Current.GoToAsync(nameof(NotesCreatePage), query);
         }
 
         [RelayCommand]
